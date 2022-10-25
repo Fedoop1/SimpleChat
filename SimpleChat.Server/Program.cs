@@ -132,6 +132,7 @@ Task BroadcastMessagesAsync(string clientName, string message)
         {
             Console.WriteLine($"Broadcasting message to {kvp.Key}...");
             await kvp.Value.WriteAsync(buffer);
+
             Console.WriteLine($"Broadcast message was delivered to {kvp.Key}");
         });
 
@@ -157,7 +158,7 @@ async Task<string?> ReadUserMetadataAsync(PipeStream stream, CancellationToken t
     return clientMetadata[(userNameMetadataKey.Length + 1)..];
 }
 
-static NamedPipeServerStream GetNewPipeStream() => new(serverPipeName, PipeDirection.InOut, Environment.ProcessorCount);
+static NamedPipeServerStream GetNewPipeStream() => new(serverPipeName, PipeDirection.InOut, Environment.ProcessorCount, PipeTransmissionMode.Message, PipeOptions.Asynchronous | PipeOptions.WriteThrough);
 
 static async Task CloseConnectionAsync(NamedPipeServerStream stream)
 {

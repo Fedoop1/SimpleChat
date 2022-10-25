@@ -23,7 +23,8 @@ Console.WriteLine("Press ESC to cancel");
 var cancellationTask = ReadForCancellation(cts);
 
 var chatServerStream =
-    new NamedPipeClientStream(localComputerName, serverPipeName, PipeDirection.InOut, PipeOptions.Asynchronous);
+    new NamedPipeClientStream(localComputerName, serverPipeName, PipeDirection.InOut, PipeOptions.Asynchronous | PipeOptions.WriteThrough) 
+    { ReadMode = PipeTransmissionMode.Message };
 
 try
 {
@@ -104,7 +105,7 @@ static async Task ReadMessages(PipeStream stream, CancellationToken token)
     {
         token.ThrowIfCancellationRequested();
 
-        var message = await ReadMessageFromStreamAsync(stream, token);
+            var message = await ReadMessageFromStreamAsync(stream, token);
 
         if (string.IsNullOrEmpty(message))
         {
